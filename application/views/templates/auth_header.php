@@ -10,10 +10,10 @@
   <meta name="author" content="">
 
   <title><?= $title; ?></title>
-  	<link href="<?= base_url('assets/'); ?>css/bootstrap.min.css" rel="stylesheet">
-	<link href="<?= base_url('assets/'); ?>css/login-style.css" rel="stylesheet" type="text/css"></link>
-	<script src="<?= base_url('assets/'); ?>js/bootstrap.min.js" rel="stylesheet"></script>
-	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link href="<?= base_url('assets/'); ?>css/bootstrap.min.css" rel="stylesheet">
+  <link href="<?= base_url('assets/'); ?>css/login-style.css" rel="stylesheet" type="text/css"></link>
+  <script src="<?= base_url('assets/'); ?>js/bootstrap.min.js" rel="stylesheet"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 </head>
 

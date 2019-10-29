@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Surat extends CI_Controller {
-	
+
 	public function index()
 	{
 		if (!isset($_SESSION['email'])) {
@@ -14,7 +14,7 @@ class Surat extends CI_Controller {
 		$data['counts'] =$this->db->select('*')->from('surat_masuk')->where('disposisi', '')->count_all_results();
 		$data['counts3'] =$this->db->count_all_results('surat_masuk');
 		$data['counts2'] =$this->db->select('*')->from('surat_masuk')->where('status', 'menunggu')->count_all_results();
-		
+
 		$this->load->view('templates/dash_header', $data);
 		$this->load->view('templates/dash_sidebar', $data);
 		$this->load->view('templates/dash_navbar', $data);
@@ -73,14 +73,12 @@ class Surat extends CI_Controller {
 
 	}
 
-
 	public function disposisi()
 	{
 		$this->form_validation->set_rules('keterangan', 'Keterangan', 'required|trim');
 		$this->form_validation->set_rules('status', 'status', 'required|trim');
 
 		if ( $this->form_validation->run() == false ) {
-			echo "gagal";
 			$data['title'] = 'Surat Masuk';
 			$data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
 			$data['menu'] = $this->db->get('surat_masuk')->result_array();
@@ -117,36 +115,27 @@ class Surat extends CI_Controller {
 		$cellHeight = 10;
 
 		if ($pdf->GetStringWidth($surat['disposisi']) < $cellWidth){
-		//jika tidak, maka tidak melakukan apa-apa
 			$line = 1;
 		} else {
-		//jika ya, maka hitung ketinggian yang dibutuhkan untuk sel akan dirapikan
-		//dengan memisahkan teks agar sesuai dengan lebar sel
-		//lalu hitung berapa banyak baris yang dibutuhkan agar teks pas dengan sel
 
-		$textLength = strlen($surat['disposisi']);	//total panjang teks
-		$errMargin = 5;		//margin kesalahan lebar sel, untuk jaga-jaga
-		$startChar = 0;		//posisi awal karakter untuk setiap baris
-		$maxChar = 0;			//karakter maksimum dalam satu baris, yang akan ditambahkan nanti
-		$textArray = array();	//untuk menampung data untuk setiap baris
-		$tmpString = "";		//untuk menampung teks untuk setiap baris (sementara)
-		
-			while($startChar < $textLength){ //perulangan sampai akhir teks
-			//perulangan sampai karakter maksimum tercapai
+			$textLength = strlen($surat['disposisi']);
+			$errMargin = 5;
+			$startChar = 0;
+			$maxChar = 0;
+			$textArray = array();
+			$tmpString = "";
+
+			while($startChar < $textLength){
 				while($pdf->GetStringWidth( $tmpString ) < ($cellWidth-$errMargin) && ($startChar+$maxChar) < $textLength ) {
 					$maxChar++;
 					$tmpString = substr($surat['disposisi'],$startChar,$maxChar);
 				}
-			//pindahkan ke baris berikutnya
 				$startChar = $startChar+$maxChar;
-			//kemudian tambahkan ke dalam array sehingga kita tahu berapa banyak baris yang dibutuhkan
 				array_push($textArray,$tmpString);
-			//reset variabel penampung
 				$maxChar = 0;
 				$tmpString = '';
 
 			}
-		//dapatkan jumlah baris
 			$line=count($textArray);
 		}
 
@@ -164,10 +153,8 @@ class Surat extends CI_Controller {
 
 		$xPos=$pdf->GetX();
 		$yPos=$pdf->GetY();
-		$pdf->MultiCell($cellWidth,$cellHeight,$surat['disposisi'],0,1);
+		$pdf->MultiCell($cellWidth,$cellHeight,$surat['disposisi'],0);
 
-	//kembalikan posisi untuk sel berikutnya di samping MultiCell 
-    //dan offset x dengan lebar MultiCell
 		$pdf->SetXY($xPos + $cellWidth , $yPos);
 
 		$pdf->Output('laporan'.$noUrut.'.pdf','D');
@@ -175,18 +162,50 @@ class Surat extends CI_Controller {
 
 	public function lihatSurat()
 	{
-		$data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
 		$data['title'] = 'Surat Masuk';
-		$data['menu'] =  $this->db->from('surat_masuk')->order_by('surat_masuk.sifat_surat DESC')->get()->result_array();
-		$data['menu2'] =  $this->db->from('surat_masuk')->order_by('surat_masuk.status ASC')->get()->result_array();
+		$data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+		$data['counts2'] =$this->db->select('*')->from('surat_masuk')->where('status', 'menunggu')->count_all_results();
 		$data['role'] = $this->db->get_where('user_role', ['id' => $this->session->userdata('role_id')])->row_array();
 
-		$data['counts2'] =$this->db->select('*')->from('surat_masuk')->where('status', 'menunggu')->count_all_results();
+		if ($this->session->userdata('role_id') == '1') {
+			$filter = '2';
+		} else {
+			$filter = '3';
+		}
 
-		$this->load->view('templates/dash_header', $data);
-		$this->load->view('templates/dash_sidebar', $data);
-		$this->load->view('templates/dash_navbar', $data);
-		$this->load->view('surat/lihatSurat', $data);
-		$this->load->view('templates/dash_footer', $data);
+		$filter = $this->input->post('filter');
+
+		if (empty($filter) || $filter == '1') {
+			$data['menu'] =  $this->db->from('surat_masuk')->order_by('surat_masuk.sifat_surat DESC')->get()->result_array();
+			$data['menu2'] =  $this->db->from('surat_masuk')->order_by('surat_masuk.status ASC')->get()->result_array();
+
+			$this->load->view('templates/dash_header', $data);
+			$this->load->view('templates/dash_sidebar', $data);
+			$this->load->view('templates/dash_navbar', $data);
+			$this->load->view('surat/lihatSurat', $data);
+			$this->load->view('templates/dash_footer', $data);
+
+		} else if ($filter == '2') {
+			$data['menu'] =  $this->db->from('surat_masuk')->where('status', 'menunggu')->order_by('surat_masuk.sifat_surat DESC')->get()->result_array();
+			$data['menu2'] =  $this->db->from('surat_masuk')->where('status', 'menunggu')->order_by('surat_masuk.status ASC')->get()->result_array();
+
+			$this->load->view('templates/dash_header', $data);
+			$this->load->view('templates/dash_sidebar', $data);
+			$this->load->view('templates/dash_navbar', $data);
+			$this->load->view('surat/lihatSurat', $data);
+			$this->load->view('templates/dash_footer', $data);
+
+		} else {
+			$data['menu'] =  $this->db->from('surat_masuk')->where('status !=', 'menunggu')->order_by('surat_masuk.sifat_surat DESC')->get()->result_array();
+			$data['menu2'] =  $this->db->from('surat_masuk')->where('status !=', 'menunggu')->order_by('surat_masuk.status ASC')->get()->result_array();
+
+			$this->load->view('templates/dash_header', $data);
+			$this->load->view('templates/dash_sidebar', $data);
+			$this->load->view('templates/dash_navbar', $data);
+			$this->load->view('surat/lihatSurat', $data);
+			$this->load->view('templates/dash_footer', $data);
+
+		}
 	}
+
 }

@@ -16,7 +16,7 @@
       <!-- Topbar Navbar -->
       <ul class="navbar-nav ml-auto">
 
-        <?php if ($role['role'] == 'Direktur'): ?>
+        <?php if ($role['id'] == '2'): ?>
           <!-- Nav Item - Messages -->
           <li class="nav-item dropdown no-arrow mx-1">
             <a class="nav-link dropdown-toggle" href="<?= base_url('surat/lihatSurat'); ?>" id="messagesDropdown" role="button">

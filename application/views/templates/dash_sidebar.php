@@ -28,11 +28,16 @@
           <a class="nav-link" href="<?= base_url('surat'); ?>">
             <i class="far fa-envelope"></i>
             <span>Manajemen Surat</span></a>
+
+            <a class="nav-link" href="<?= base_url('user/lihatAkun'); ?>">
+              <i class="fas fa-fw fa-user"></i>
+              <span>Manajemen Akun</span>
+            </a>
           </li>
 
           <!-- Divider -->
           <hr class="sidebar-divider">
-          
+
           <!-- Heading -->
           <div class="sidebar-heading">
             System

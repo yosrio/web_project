@@ -7,7 +7,7 @@
           <main>
             <!-- container START -->
             <div class="container">
-              <?php if ($role['role'] == 'Keuangan'): ?>
+              <?php if ($role['id'] == '1'): ?>
                 Transaksi Surat: 
                 <p>
                   <a href="<?= base_url('surat/tambahSuratMasuk'); ?>" class="btn btn-success" role="button">Surat Masuk</a>
@@ -26,7 +26,7 @@
                     <div class="col-md-8">
                       <div class="card-body">
                         <h5 class="card-title">Jumlah Surat Masuk</h5>
-                        <?php if ($role['role'] == 'Keuangan'): ?>
+                        <?php if ($role['id'] == '1'): ?>
                           <p class="card-text"> <?= $counts3; ?> Surat Masuk</p>
                           <?php else: ?>
                             <p class="card-text"> <?= $counts; ?> Surat Masuk</p>

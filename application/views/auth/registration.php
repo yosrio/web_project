@@ -14,7 +14,7 @@
         </div>
         <div class="form-group">
          <select class="dropdown" id="role_id" name="role_id">
-          <option value="1">Keuangan</option>
+          <option value="1">Admin</option>
           <option value="2">Direktur</option>
         </select>
       </div>

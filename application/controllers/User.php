@@ -22,4 +22,22 @@ class User extends CI_Controller {
 		$this->load->view('templates/dash_footer', $data);
 	}
 
+	public function lihatAkun(){
+		if (!isset($_SESSION['email'])) {
+			redirect('auth');
+		}
+
+		$data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+		$data['title'] = 'Profil';
+		$data['role'] = $this->db->get_where('user_role', ['id' => $this->session->userdata('role_id')])->row_array();
+		$data['karyawan'] =$this->db->select('*')->from('user')->get()->result_array();
+		$data['roleKaryawan'] =$this->db->select('*')->from('user')->get()->result_array();
+
+
+		$this->load->view('templates/dash_header', $data);
+		$this->load->view('templates/dash_sidebar', $data);
+		$this->load->view('templates/dash_navbar', $data);
+		$this->load->view('user/lihatAkun', $data);
+		$this->load->view('templates/dash_footer', $data);
+	}
 }

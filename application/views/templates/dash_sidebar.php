@@ -28,11 +28,29 @@
           <a class="nav-link" href="<?= base_url('surat'); ?>">
             <i class="far fa-envelope"></i>
             <span>Manajemen Surat</span></a>
+          </li>
+          
+          <!-- Divider -->
+          <hr class="sidebar-divider">
 
-            <a class="nav-link" href="<?= base_url('user/lihatAkun'); ?>">
+          <!-- Heading -->
+          <div class="sidebar-heading">
+            User
+          </div>
+
+          <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
               <i class="fas fa-fw fa-user"></i>
               <span>Manajemen Akun</span>
             </a>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+              <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Manajemen Akun</h6>
+                <a class="collapse-item" href="<?= base_url('user/lihatAkun'); ?>">Lihat Akun</a>
+                <a class="collapse-item" href="<?= base_url('user/editAkun'); ?>">Edit Akun</a>
+                <a class="collapse-item" href="<?= base_url('user/tambahAkun'); ?>">Tambah Akun</a>
+              </div>
+            </div>
           </li>
 
           <!-- Divider -->

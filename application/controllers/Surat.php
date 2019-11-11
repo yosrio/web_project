@@ -11,28 +11,14 @@ class Surat extends CI_Controller {
 		$data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
 		$data['title'] = 'Manajemen Surat';
 		$data['role'] = $this->db->get_where('user_role', ['id' => $this->session->userdata('role_id')])->row_array();
-		$data['counts'] =$this->db->select('*')->from('surat_masuk')->where('disposisi', '')->count_all_results();
-		$data['counts3'] =$this->db->count_all_results('surat_masuk');
-		$data['counts2'] =$this->db->select('*')->from('surat_masuk')->where('status', 'menunggu')->count_all_results();
+		$data['countsSM2'] =$this->db->select('*')->from('surat_masuk')->where('disposisi', '')->count_all_results();
+		$data['countsSM'] =$this->db->count_all_results('surat_masuk');
+		$data['countsSK'] =$this->db->count_all_results('surat_keluar');
 
 		$this->load->view('templates/dash_header', $data);
 		$this->load->view('templates/dash_sidebar', $data);
 		$this->load->view('templates/dash_navbar', $data);
 		$this->load->view('surat/index', $data);
-		$this->load->view('templates/dash_footer', $data);
-	}
-
-	public function suratMasuk()
-	{
-		$data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
-		$data['title'] = 'Surat Masuk';
-		$data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
-		$data['role'] = $this->db->get_where('user_role', ['id' => $this->session->userdata('role_id')])->row_array();
-		$data['counts2'] =$this->db->select('*')->from('surat_masuk')->where('status', 'menunggu')->count_all_results();
-		$this->load->view('templates/dash_header', $data);
-		$this->load->view('templates/dash_sidebar', $data);
-		$this->load->view('templates/dash_navbar', $data);
-		$this->load->view('surat/surat_masuk', $data);
 		$this->load->view('templates/dash_footer', $data);
 	}
 
@@ -58,7 +44,7 @@ class Surat extends CI_Controller {
 			$this->load->view('templates/dash_footer', $data);
 		} else {
 			$data = [
-				'tanggal_masuk' => htmlspecialchars($this->input->post('tgl_surat', true)),
+				'tanggal_masuk' => strtotime(htmlspecialchars($this->input->post('tgl_surat', true))),
 				'tujuan' => htmlspecialchars($this->input->post('tujuan', true)),
 				'penerima' => htmlspecialchars($this->input->post('penerima', true)),
 				'no_surat_masuk' => htmlspecialchars($this->input->post('noSuratMasuk', true)),
@@ -68,6 +54,38 @@ class Surat extends CI_Controller {
 				'status' => 'menunggu'
 			];
 			$this->db->insert('surat_masuk', $data);
+			redirect('surat');
+		}
+
+	}
+
+	public function tambahSuratKeluar()
+	{
+		$this->form_validation->set_rules('namaPerusahaan', 'NamaPerusahaan', 'required|trim');
+		$this->form_validation->set_rules('pj', 'Pj', 'required|trim');
+		$this->form_validation->set_rules('tgl_kirim', 'Tgl_kirim', 'required|trim');
+		$this->form_validation->set_rules('tgl_sampai', 'Tgl_sampai', 'required|trim');
+		$this->form_validation->set_rules('biaya', 'Biaya', 'required|trim');
+
+		if ( $this->form_validation->run() == false ) {
+			$data['title'] = 'Surat Keluar';
+			$data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+			$data['role'] = $this->db->get_where('user_role', ['id' => $this->session->userdata('role_id')])->row_array();
+
+			$this->load->view('templates/dash_header', $data);
+			$this->load->view('templates/dash_sidebar', $data);
+			$this->load->view('templates/dash_navbar', $data);
+			$this->load->view('surat/tambahSuratKeluar', $data);
+			$this->load->view('templates/dash_footer', $data);
+		} else {
+			$data = [
+				'nama_perusahaan' => htmlspecialchars($this->input->post('namaPerusahaan', true)),
+				'penanggungjawab' => htmlspecialchars($this->input->post('pj', true)),
+				'tanggal_dikirim' => strtotime(htmlspecialchars($this->input->post('tgl_kirim', true))),
+				'tanggal_harus_sampai' => strtotime(htmlspecialchars($this->input->post('tgl_sampai', true))),
+				'biaya_ongkos' => htmlspecialchars($this->input->post('biaya', true))
+			];
+			$this->db->insert('surat_keluar', $data);
 			redirect('surat');
 		}
 
@@ -87,7 +105,7 @@ class Surat extends CI_Controller {
 			$this->load->view('templates/dash_header', $data);
 			$this->load->view('templates/dash_sidebar', $data);
 			$this->load->view('templates/dash_navbar', $data);
-			$this->load->view('surat/lihatSurat', $data);
+			$this->load->view('surat/lihatSuratMasuk', $data);
 			$this->load->view('templates/dash_footer', $data);
 		} else {
 
@@ -100,7 +118,7 @@ class Surat extends CI_Controller {
 			$this->db->where('no_urut', $noUrut);
 			$this->db->update('surat_masuk');
 
-			redirect('surat/lihatSurat');
+			redirect('surat/lihatSuratMasuk');
 		}
 	}
 
@@ -160,18 +178,12 @@ class Surat extends CI_Controller {
 		$pdf->Output('laporan'.$noUrut.'.pdf','D');
 	}
 
-	public function lihatSurat()
+	public function lihatSuratMasuk()
 	{
 		$data['title'] = 'Surat Masuk';
 		$data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
 		$data['counts2'] =$this->db->select('*')->from('surat_masuk')->where('status', 'menunggu')->count_all_results();
 		$data['role'] = $this->db->get_where('user_role', ['id' => $this->session->userdata('role_id')])->row_array();
-
-		if ($this->session->userdata('role_id') == '1') {
-			$filter = '2';
-		} else {
-			$filter = '3';
-		}
 
 		$filter = $this->input->post('filter');
 
@@ -182,7 +194,7 @@ class Surat extends CI_Controller {
 			$this->load->view('templates/dash_header', $data);
 			$this->load->view('templates/dash_sidebar', $data);
 			$this->load->view('templates/dash_navbar', $data);
-			$this->load->view('surat/lihatSurat', $data);
+			$this->load->view('surat/lihatSuratMasuk', $data);
 			$this->load->view('templates/dash_footer', $data);
 
 		} else if ($filter == '2') {
@@ -192,7 +204,7 @@ class Surat extends CI_Controller {
 			$this->load->view('templates/dash_header', $data);
 			$this->load->view('templates/dash_sidebar', $data);
 			$this->load->view('templates/dash_navbar', $data);
-			$this->load->view('surat/lihatSurat', $data);
+			$this->load->view('surat/lihatSuratMasuk', $data);
 			$this->load->view('templates/dash_footer', $data);
 
 		} else {
@@ -202,10 +214,25 @@ class Surat extends CI_Controller {
 			$this->load->view('templates/dash_header', $data);
 			$this->load->view('templates/dash_sidebar', $data);
 			$this->load->view('templates/dash_navbar', $data);
-			$this->load->view('surat/lihatSurat', $data);
+			$this->load->view('surat/lihatSuratMasuk', $data);
 			$this->load->view('templates/dash_footer', $data);
 
 		}
+	}
+
+	public function lihatSuratKeluar()
+	{
+		$data['title'] = 'Surat Masuk';
+		$data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+		$data['counts2'] =$this->db->select('*')->from('surat_masuk')->where('status', 'menunggu')->count_all_results();
+		$data['role'] = $this->db->get_where('user_role', ['id' => $this->session->userdata('role_id')])->row_array();
+
+		$this->load->view('templates/dash_header', $data);
+		$this->load->view('templates/dash_sidebar', $data);
+		$this->load->view('templates/dash_navbar', $data);
+		$this->load->view('surat/lihatSuratKeluar', $data);
+		$this->load->view('templates/dash_footer', $data);
+
 	}
 
 }

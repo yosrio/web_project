@@ -1,4 +1,5 @@
 <!-- Begin Page Content -->
+              <!-- <?= $this->session->flashdata('message'); ?> -->
 <div class="container-fluid">
   <div class="card mb-3" style="max-width: 1000px;">
     <div class="row no-gutters">
